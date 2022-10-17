@@ -22,6 +22,12 @@ namespace UsersManagement.Repository.Repository
         {
              await _dbContext.Set<T>().AddAsync(entity);
         }
+        public async Task UpdateAsync(T entity)
+        {
+            _dbContext.Attach(entity);
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
         public Task DeleteAsync(T entity)
         {
             _dbContext.Set<T>().Remove(entity);

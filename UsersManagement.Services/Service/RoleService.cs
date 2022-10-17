@@ -17,12 +17,16 @@ namespace UsersManagement.Services.Service
         private readonly IMapper mapper;
         public RoleService(IRepositoryAsync<Role> roleRepository, IMapper mapper) : base(roleRepository, mapper)
         {
-            roleRepository = roleRepository;
-            mapper = mapper;
+            this.roleRepository = roleRepository;
+            this.mapper = mapper;
         }
         public async Task<RoleDto> RoleDetailsById(int id)
         {
             return mapper.Map<RoleDto>(await roleRepository.GetByIdAsync(id));
+        }
+        public async Task<List<RoleDto>> GetAllRolesAsync()
+        {
+            return mapper.Map<List<RoleDto>>(await roleRepository.GetAll());
         }
     }
 }

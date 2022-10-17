@@ -10,5 +10,6 @@ namespace UsersManagement.Services.DTO
     {
         public int Id { get; set; }
         public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
     }
 }

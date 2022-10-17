@@ -19,7 +19,6 @@ namespace UsersManagement.Services.DTO
         [MaxLength(100)]
         public string Description { get; set; }
 
-        public virtual ICollection<UserDto> Users { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Role, RoleDto>().ReverseMap();

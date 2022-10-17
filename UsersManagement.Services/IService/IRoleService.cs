@@ -11,5 +11,6 @@ namespace UsersManagement.Services.IService
     public interface IRoleService : IServiceAsync<Role, RoleDto>
     {
         Task<RoleDto> RoleDetailsById(int id);
+        Task<List<RoleDto>> GetAllRolesAsync();
     }
 }

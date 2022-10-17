@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UsersManagement.Repository;
+using UsersManagement.Services.DTO;
 
 namespace UsersManagement.Services.UOW
 {

@@ -26,6 +26,11 @@ namespace UsersManagement.Services.Service
             var entity = _mapper.Map<TEntity>(tDto);
             await _repository.AddAsync(entity);
         }
+        public async Task UpdateAsync(TDto tDto)
+        {
+            var entity = _mapper.Map<TEntity>(tDto);
+            await _repository.UpdateAsync(entity);
+        }
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(await _repository.GetByIdAsync(id));

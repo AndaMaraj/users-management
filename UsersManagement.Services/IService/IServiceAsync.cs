@@ -10,6 +10,7 @@ namespace UsersManagement.Services.IService
     public interface IServiceAsync<TEntity, TDto>
     {
         Task AddAsync(TDto dto);
+        Task UpdateAsync(TDto dto);
         Task DeleteAsync(int id);
         Task<IEnumerable<TDto>> GetAll(Expression<Func<TDto, bool>> expression = null);
         Task<TDto> GetByIdAsync(int id);

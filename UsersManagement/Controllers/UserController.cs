@@ -27,9 +27,10 @@ namespace UsersManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UserDto user)
         {
-            if (ModelState.IsValid) return View(user);
+            if (!ModelState.IsValid) return View(user);
+            await userService.AddAsync(user);
             await uniteOfWork.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", controllerName: "User");
         }
     }
 }

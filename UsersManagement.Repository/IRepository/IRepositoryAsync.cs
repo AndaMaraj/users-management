@@ -12,6 +12,7 @@ namespace UsersManagement.Repository.IRepository
     public interface IRepositoryAsync<T> where T:BaseEntity
     {
         Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null);
         Task<T> GetByIdAsync(int id);
