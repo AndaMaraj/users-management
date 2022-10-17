@@ -12,5 +12,14 @@ namespace UsersManagement.Repository
         {
 
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(x => x.IsDeleted == false);
+            modelBuilder.Entity<Role>()
+                .HasQueryFilter(x => x.IsDeleted == false);
+        }
     }
 }

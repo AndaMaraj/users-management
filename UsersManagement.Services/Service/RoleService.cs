@@ -8,6 +8,7 @@ using UsersManagement.Repository.Entities;
 using UsersManagement.Repository.IRepository;
 using UsersManagement.Services.DTO;
 using UsersManagement.Services.IService;
+using UsersManagement.Services.UOW;
 
 namespace UsersManagement.Services.Service
 {
@@ -15,7 +16,7 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRepositoryAsync<Role> roleRepository;
         private readonly IMapper mapper;
-        public RoleService(IRepositoryAsync<Role> roleRepository, IMapper mapper) : base(roleRepository, mapper)
+        public RoleService(IRepositoryAsync<Role> roleRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
         {
             this.roleRepository = roleRepository;
             this.mapper = mapper;

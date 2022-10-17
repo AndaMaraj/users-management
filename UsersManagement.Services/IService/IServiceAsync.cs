@@ -11,7 +11,7 @@ namespace UsersManagement.Services.IService
     {
         Task AddAsync(TDto dto);
         Task UpdateAsync(TDto dto);
-        Task DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
         Task<IEnumerable<TDto>> GetAll(Expression<Func<TDto, bool>> expression = null);
         Task<TDto> GetByIdAsync(int id);
         Task<TDto> GetFirstAsync(Expression<Func<TDto, bool>> expression);

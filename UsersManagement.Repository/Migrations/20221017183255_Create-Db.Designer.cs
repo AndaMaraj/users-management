@@ -12,7 +12,7 @@ using UsersManagement.Repository;
 namespace UsersManagement.Repository.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20221017095144_CreateDb")]
+    [Migration("20221017183255_Create-Db")]
     partial class CreateDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

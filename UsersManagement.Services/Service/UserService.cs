@@ -10,6 +10,7 @@ using UsersManagement.Repository.Entities;
 using UsersManagement.Repository.IRepository;
 using UsersManagement.Services.DTO;
 using UsersManagement.Services.IService;
+using UsersManagement.Services.UOW;
 
 namespace UsersManagement.Services.Service
 {
@@ -17,7 +18,7 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRepositoryAsync<User> userRepository;
         private readonly IMapper mapper;
-        public UserService(IRepositoryAsync<User> userRepository, IMapper mapper) : base(userRepository, mapper)
+        public UserService(IRepositoryAsync<User> userRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(userRepository, mapper, uniteOfWork)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;

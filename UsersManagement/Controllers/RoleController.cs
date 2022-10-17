@@ -29,9 +29,9 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Create(RoleDto role)
         {
             if (!ModelState.IsValid) return View(role);
-            role.CreatedOn = DateTime.UtcNow;
             await roleService.AddAsync(role);
             await uniteOfWork.SaveChangesAsync();
+            
             return RedirectToAction("Index", controllerName: "Role");
         }
         public async Task<IActionResult> Edit(int? id)
@@ -39,6 +39,7 @@ namespace UsersManagement.Controllers
             if (id == null) return NotFound();
             var role = await roleService.GetByIdAsync(id.Value);
             if (role == null) return NotFound();
+            
             return View(role);
         }
         [HttpPost]
@@ -47,25 +48,34 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                role.UpdatedOn = DateTime.UtcNow;
                 await roleService.UpdateAsync(role);
-                await uniteOfWork.SaveChangesAsync();
                 return RedirectToAction("Index", controllerName: "Role");
             }
             return View(role);
         }
         public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if(id == null) return NotFound();
+            var role = await roleService.GetByIdAsync(id.Value);
+            if(role == null) return NotFound();
+
+            return View(role);
         }
         [HttpPost]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            var role = await roleService.GetByIdAsync(id.Value);
-            await roleService.DeleteAsync(id.Value);
-            await uniteOfWork.SaveChangesAsync();
+            if(await roleService.DeleteAsync(id.Value))
+            {
+                //todo: show message deleted
+                ViewBag.SuccessMessage = "File was successfully deleted";
+            }
+            else
+            {
+                //todo: show message error
+                ViewBag.ErrorMessage = "Role was not deleted, please try again";
+            }
             return RedirectToAction("Index", controllerName: "Role");
         }
     }
