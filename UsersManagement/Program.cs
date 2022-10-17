@@ -1,12 +1,33 @@
 using UsersManagement.Repository.IRepository;
 using UsersManagement.Repository.Repository;
+using UsersManagement.Services.IService;
+using UsersManagement.Services.Service;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using UsersManagement.Repository.Entities;
+using UsersManagement.Services.DTO;
+using AutoMapper.Extensions.ExpressionMapping;
+using UsersManagement.Services.Mappings;
+using UsersManagement.Repository;
+using UsersManagement.Services.UOW;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddDbContext<UsersDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UserManagementContext"));
+});
+
 builder.Services.AddScoped(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
+builder.Services.AddScoped(typeof(IServiceAsync<BaseEntity, BaseEntityDto>), typeof(ServiceAsync<BaseEntity, BaseEntityDto>));
+builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
+builder.Services.AddScoped(typeof(IRoleService), typeof(RoleService));
+builder.Services.AddAutoMapper(cfg => { cfg.AddExpressionMapping(); }, typeof(MappingProfile).Assembly);
+builder.Services.AddScoped(typeof(IUniteOfWork), typeof(UniteOfWork));
 
 var app = builder.Build();
 

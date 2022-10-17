@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UsersManagement.Models.Entities
+namespace UsersManagement.Repository.Entities
 {
     public class Role : BaseEntity
     {

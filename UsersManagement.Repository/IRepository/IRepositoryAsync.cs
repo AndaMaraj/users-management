@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using UsersManagement.Models.Entities;
+using UsersManagement.Repository.Entities;
 
 namespace UsersManagement.Repository.IRepository
 {
@@ -13,8 +13,9 @@ namespace UsersManagement.Repository.IRepository
     {
         Task AddAsync(T entity);
         Task DeleteAsync(T entity);
-        IQueryable<T> GetAll(Expression<Func<T, bool>> expression = null);
+        Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null);
         Task<T> GetByIdAsync(int id);
         Task<T> GetFirstAsync(Expression<Func<T, bool>> expression);
+        IQueryable<T> Entities { get; }
     }
 }

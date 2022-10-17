@@ -1,4 +1,4 @@
-﻿namespace UsersManagement.Models.Entities
+﻿namespace UsersManagement.Repository.Entities
 {
     public class BaseEntity
     {

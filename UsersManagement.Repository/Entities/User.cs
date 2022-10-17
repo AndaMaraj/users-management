@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UsersManagement.Models.Entities
+namespace UsersManagement.Repository.Entities
 {
     public class User : BaseEntity
     {

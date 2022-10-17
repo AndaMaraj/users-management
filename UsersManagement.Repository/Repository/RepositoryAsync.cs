@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using UsersManagement.Models.Entities;
+using UsersManagement.Repository.Entities;
 using UsersManagement.Repository.IRepository;
 
 namespace UsersManagement.Repository.Repository
@@ -17,6 +17,7 @@ namespace UsersManagement.Repository.Repository
         {
             _dbContext = dbContext;
         }
+        public IQueryable<T> Entities => _dbContext.Set<T>();
         public async Task AddAsync(T entity)
         {
              await _dbContext.Set<T>().AddAsync(entity);
@@ -26,12 +27,12 @@ namespace UsersManagement.Repository.Repository
             _dbContext.Set<T>().Remove(entity);
             return Task.CompletedTask;
         }
-        public IQueryable<T> GetAll(Expression<Func<T, bool>> expression = null)
+        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null)
         {
-            var result = _dbContext.Set<T>().AsNoTracking();
+            var set = _dbContext.Set<T>();
             if (expression != null)
-                result = result.Where(expression);
-            return result;
+                return set.Where(expression);
+            return set.AsNoTracking();
         }
         public async Task<T> GetByIdAsync(int id)
         {
