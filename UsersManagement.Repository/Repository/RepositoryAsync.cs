@@ -21,7 +21,7 @@ namespace UsersManagement.Repository.Repository
         public IQueryable<T> Entities => _dbContext.Set<T>();
         public async Task AddAsync(T entity)
         {
-             await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.Set<T>().AddAsync(entity);
         }
         public async Task UpdateAsync(T entity)
         {
@@ -34,7 +34,7 @@ namespace UsersManagement.Repository.Repository
             _dbContext.Set<T>().Remove(entity);
             return Task.CompletedTask;
         }
-        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>,IIncludableQueryable<T,object>> include = null)
+        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             var set = _dbContext.Set<T>().AsQueryable();
             if (expression != null)
@@ -43,9 +43,14 @@ namespace UsersManagement.Repository.Repository
                 set = include(set);
             return set.AsNoTracking();
         }
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            var set = _dbContext.Set<T>().AsQueryable();
+            if (include != null)
+            {
+                set = include(set);
+            }
+            return await set.FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<T> GetFirstAsync(Expression<Func<T, bool>> expression)
         {

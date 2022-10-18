@@ -24,6 +24,10 @@ namespace UsersManagement.Services.Service
             this.userRepository = userRepository;
             this.mapper = mapper;
         }
+        public new async Task<UserDto> GetByIdAsync(int id)
+        {
+            return mapper.Map<UserDto>(await userRepository.GetByIdAsync(id, src => src.Include(x => x.Role)));
+        }
         public async Task<UserDto> UserDetailsByIdAsync(int id)
         {
             return mapper.Map<UserDto>(await userRepository.GetByIdAsync(id));

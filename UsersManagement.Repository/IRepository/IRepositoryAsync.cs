@@ -16,7 +16,7 @@ namespace UsersManagement.Repository.IRepository
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
-        Task<T> GetByIdAsync(int id);
+        Task<T> GetByIdAsync(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
         Task<T> GetFirstAsync(Expression<Func<T, bool>> expression);
         IQueryable<T> Entities { get; }
     }
