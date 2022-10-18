@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace UsersManagement.Repository.Repository
 {
     public class RepositoryAsync<T> : IRepositoryAsync<T> where T : BaseEntity
     {
-        private readonly UsersDbContext _dbContext;
+        protected readonly UsersDbContext _dbContext;
         public RepositoryAsync(UsersDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -33,11 +34,13 @@ namespace UsersManagement.Repository.Repository
             _dbContext.Set<T>().Remove(entity);
             return Task.CompletedTask;
         }
-        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null)
+        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>,IIncludableQueryable<T,object>> include = null)
         {
-            var set = _dbContext.Set<T>();
+            var set = _dbContext.Set<T>().AsQueryable();
             if (expression != null)
                 return set.Where(expression);
+            if (include != null)
+                set = include(set);
             return set.AsNoTracking();
         }
         public async Task<T> GetByIdAsync(int id)

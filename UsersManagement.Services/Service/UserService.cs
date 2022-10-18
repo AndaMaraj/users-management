@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UsersManagement.Repository.Entities;
 using UsersManagement.Repository.IRepository;
+using UsersManagement.Repository.Repository;
 using UsersManagement.Services.DTO;
 using UsersManagement.Services.IService;
 using UsersManagement.Services.UOW;
@@ -29,7 +30,8 @@ namespace UsersManagement.Services.Service
         }
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
-            return mapper.Map<List<UserDto>>(await userRepository.GetAll());
+
+            return mapper.Map<List<UserDto>>(await userRepository.GetAll(include: src => src.Include(x => x.Role)));
         }
     }
 }

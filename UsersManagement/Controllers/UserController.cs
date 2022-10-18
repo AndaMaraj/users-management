@@ -24,12 +24,7 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Create()
         {
             var roles = await _roleService.GetAllRolesAsync();
-            var nameOfRoles = new List<string>();
-            foreach(var role in roles)
-            {
-                nameOfRoles.Add(role.Name);
-            }
-            ViewBag.NameOfRoles = nameOfRoles;
+            ViewBag.Roles = roles;
             return View();
         }
         [HttpPost]

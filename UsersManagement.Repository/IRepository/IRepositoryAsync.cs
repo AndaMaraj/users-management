@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace UsersManagement.Repository.IRepository
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
-        Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null);
+        Task<IQueryable<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
         Task<T> GetByIdAsync(int id);
         Task<T> GetFirstAsync(Expression<Func<T, bool>> expression);
         IQueryable<T> Entities { get; }

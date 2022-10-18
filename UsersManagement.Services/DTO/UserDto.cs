@@ -26,10 +26,13 @@ namespace UsersManagement.Services.DTO
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        public virtual RoleDto Role { get; set; }
+        public int RoleId { get; set; }
+        public virtual RoleDto? Role { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<User, UserDto>();
+            profile.CreateMap<User, UserDto>()
+                .ForMember(dest => dest.Role, src => src.MapFrom(x => x.Role))
+                .ReverseMap();
         }
     }
 }
