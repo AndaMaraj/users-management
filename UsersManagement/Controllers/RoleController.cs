@@ -7,17 +7,17 @@ namespace UsersManagement.Controllers
 {
     public class RoleController : Controller
     {
-        private readonly IRoleService roleService;
-        private readonly IUniteOfWork uniteOfWork;
+        private readonly IRoleService _roleService;
+        private readonly IUniteOfWork _uniteOfWork;
         public RoleController(IRoleService roleService, IUniteOfWork uniteOfWork)
         {
-            this.roleService = roleService;
-            this.uniteOfWork = uniteOfWork;
+            _roleService = roleService;
+            _uniteOfWork = uniteOfWork;
         }
 
         public async Task<IActionResult> Index()
         {
-            var roles = await roleService.GetAllRolesAsync();
+            var roles = await _roleService.GetAllRolesAsync();
             return View(roles);
         }
         public IActionResult Create()
@@ -29,15 +29,15 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Create(RoleDto role)
         {
             if (!ModelState.IsValid) return View(role);
-            await roleService.AddAsync(role);
-            await uniteOfWork.SaveChangesAsync();
+            await _roleService.AddAsync(role);
+            await _uniteOfWork.SaveChangesAsync();
             
             return RedirectToAction("Index", controllerName: "Role");
         }
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var role = await roleService.GetByIdAsync(id.Value);
+            var role = await _roleService.GetByIdAsync(id.Value);
             if (role == null) return NotFound();
             
             return View(role);
@@ -48,7 +48,7 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                await roleService.UpdateAsync(role);
+                await _roleService.UpdateAsync(role);
                 return RedirectToAction("Index", controllerName: "Role");
             }
             return View(role);
@@ -56,7 +56,7 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if(id == null) return NotFound();
-            var role = await roleService.GetByIdAsync(id.Value);
+            var role = await _roleService.GetByIdAsync(id.Value);
             if(role == null) return NotFound();
 
             return View(role);
@@ -66,7 +66,7 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            if(await roleService.DeleteAsync(id.Value))
+            if(await _roleService.DeleteAsync(id.Value))
             {
                 //todo: show message deleted
                 ViewBag.SuccessMessage = "File was successfully deleted";

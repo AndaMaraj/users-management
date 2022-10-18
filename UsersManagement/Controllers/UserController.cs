@@ -7,29 +7,38 @@ namespace UsersManagement.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserService userService;
-        private readonly IUniteOfWork uniteOfWork;
-        public UserController(IUserService userService, IUniteOfWork uniteOfWork)
+        private readonly IUserService _userService;
+        private readonly IUniteOfWork _uniteOfWork;
+        private readonly IRoleService _roleService;
+        public UserController(IUserService userService, IUniteOfWork uniteOfWork, IRoleService roleService)
         {
-            this.userService = userService;
-            this.uniteOfWork = uniteOfWork;
+            _userService = userService;
+            _uniteOfWork = uniteOfWork;
+            _roleService = roleService;
         }
         public async Task<IActionResult> Index()
         {
-            var users = await userService.GetAllUsersAsync();
+            var users = await _userService.GetAllUsersAsync();
             return View(users);
         }
-        public IActionResult Add()
+        public async Task<IActionResult> Create()
         {
+            var roles = await _roleService.GetAllRolesAsync();
+            var nameOfRoles = new List<string>();
+            foreach(var role in roles)
+            {
+                nameOfRoles.Add(role.Name);
+            }
+            ViewBag.NameOfRoles = nameOfRoles;
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UserDto user)
+        public async Task<IActionResult> Create(UserDto user)
         {
             if (!ModelState.IsValid) return View(user);
-            await userService.AddAsync(user);
-            await uniteOfWork.SaveChangesAsync();
+            await _userService.AddAsync(user);
+            await _uniteOfWork.SaveChangesAsync();
             return RedirectToAction("Index", controllerName: "User");
         }
     }

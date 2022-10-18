@@ -27,6 +27,7 @@ namespace UsersManagement.Services.Service
         public async Task AddAsync(TDto tDto)
         {
             var entity = _mapper.Map<TEntity>(tDto);
+            // todo: control if name that we are adding exits in db
             entity.CreatedOn = DateTime.UtcNow;
             await _repository.AddAsync(entity);
         }
