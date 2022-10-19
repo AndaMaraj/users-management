@@ -17,10 +17,10 @@ namespace UsersManagement.Services.Service
 {
     public class UserService : ServiceAsync<User, UserDto>, IUserService
     {
-        private readonly IRepositoryAsync<User> userRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public UserService(IRepositoryAsync<User> userRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(userRepository, mapper, uniteOfWork)
+        public UserService(IUserRepository userRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(userRepository, mapper, uniteOfWork)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
@@ -37,6 +37,10 @@ namespace UsersManagement.Services.Service
         {
 
             return mapper.Map<List<UserDto>>(await userRepository.GetAll(include: src => src.Include(x => x.Role)));
+        }
+        public async Task<UserDto> GetByEmail(string email)
+        {
+            return mapper.Map<UserDto>(await userRepository.GetByEmail(email));
         }
     }
 }

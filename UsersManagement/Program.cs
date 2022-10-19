@@ -23,11 +23,13 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
 });
 
 builder.Services.AddScoped(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IServiceAsync<BaseEntity, BaseEntityDto>), typeof(ServiceAsync<BaseEntity, BaseEntityDto>));
-builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
-builder.Services.AddScoped(typeof(IRoleService), typeof(RoleService));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddAutoMapper(cfg => { cfg.AddExpressionMapping(); }, typeof(MappingProfile).Assembly);
-builder.Services.AddScoped(typeof(IUniteOfWork), typeof(UniteOfWork));
+builder.Services.AddScoped<IUniteOfWork, UniteOfWork>();
 
 var app = builder.Build();
 

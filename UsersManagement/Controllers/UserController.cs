@@ -62,20 +62,16 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var email = await _userService.GetAll(x => x.Email == user.Email);
-                // todo: control if email that user is trying to update is not of another user
-                /*
-                if(email.Count() > 0)
+                var email = await _userService.GetAll(x => x.Email == user.Email);
+                var userEmail = await _userService.GetByEmail(user.Email);
+                if (email.Count() > 0 && userEmail.Id != user.Id)
                 {
-                    var userEmail = _userService.GetUserByEmailAsync(user.Email);
-                    if(userEmail.Id != user.Id)
-                    {
-                        ViewBag.EmailExist = "There is another user with this email! Please try a different one!";
-                        var roles = await _roleService.GetAllRolesAsync();
-                        ViewBag.Roles = roles;
-                        return View();
-                    }
-                }*/
+                    ModelState.AddModelError((nameof(user.Email)), "There is another user with this email! Please try a different one!");
+                    var roles = await _roleService.GetAllRolesAsync();
+                    ViewBag.Roles = roles;
+                    return View();
+                }
+                // todo: when we try to insert the same email it throws a thread exception
                 await _userService.UpdateAsync(user);
                 return RedirectToAction("Index", controllerName: "User");
             }

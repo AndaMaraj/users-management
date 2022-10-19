@@ -14,9 +14,9 @@ namespace UsersManagement.Services.Service
 {
     public class RoleService : ServiceAsync<Role, RoleDto>, IRoleService
     {
-        private readonly IRepositoryAsync<Role> roleRepository;
+        private readonly IRoleRepository roleRepository;
         private readonly IMapper mapper;
-        public RoleService(IRepositoryAsync<Role> roleRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
+        public RoleService(IRoleRepository roleRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
         {
             this.roleRepository = roleRepository;
             this.mapper = mapper;
@@ -28,6 +28,11 @@ namespace UsersManagement.Services.Service
         public async Task<List<RoleDto>> GetAllRolesAsync()
         {
             return mapper.Map<List<RoleDto>>(await roleRepository.GetAll());
+        }
+
+        public async Task<RoleDto> GetByNameAsync(string name)
+        {
+            return mapper.Map<RoleDto>(await roleRepository.GetByNameAsync(name));
         }
     }
 }

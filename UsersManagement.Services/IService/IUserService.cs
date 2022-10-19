@@ -13,5 +13,6 @@ namespace UsersManagement.Services.IService
     {
         //Task<UserDto> UserDetailsByIdAsync(int id);
         Task<List<UserDto>> GetAllUsersAsync();
+        Task<UserDto> GetByEmail(string email);
     }
 }

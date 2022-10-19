@@ -9,14 +9,19 @@ using UsersManagement.Repository.IRepository;
 
 namespace UsersManagement.Repository.Repository
 {
-    public class UsersRepository : RepositoryAsync<User>, IRepositoryAsync<User>
+    public class UserRepository : RepositoryAsync<User>, IUserRepository
     {
-        public UsersRepository(UsersDbContext dbContext) : base(dbContext)
+        public UserRepository(UsersDbContext dbContext) : base(dbContext)
         {
         }
         public new async Task<IEnumerable<User>> GetAll()
         {
             return await _dbContext.Users.Include(x => x.Role).ToListAsync();
+        }
+
+        public async Task<User> GetByEmail(string email)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }

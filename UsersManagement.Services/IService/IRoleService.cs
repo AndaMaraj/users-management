@@ -12,5 +12,6 @@ namespace UsersManagement.Services.IService
     {
         Task<RoleDto> RoleDetailsById(int id);
         Task<List<RoleDto>> GetAllRolesAsync();
+        Task<RoleDto> GetByNameAsync(string name);
     }
 }

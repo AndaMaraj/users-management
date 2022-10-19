@@ -44,7 +44,6 @@ namespace UsersManagement.Controllers
         }
         public async Task<IActionResult> Edit(int? id)
         {
-            // todo: control if the user is adding a name of an existing user
             if (id == null) return NotFound();
             var role = await _roleService.GetByIdAsync(id.Value);
             if (role == null) return NotFound();
@@ -57,6 +56,12 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
+                var nameDb = await _roleService.GetByNameAsync(role.Name);
+                if(nameDb != null && nameDb.Id != role.Id)
+                {
+                    ModelState.AddModelError(nameof(role.Name),"There is another role with this name");
+                    return View(role);
+                }
                 await _roleService.UpdateAsync(role);
                 return RedirectToAction("Index", controllerName: "Role");
             }
