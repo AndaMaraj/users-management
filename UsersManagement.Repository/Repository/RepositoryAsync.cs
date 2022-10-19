@@ -52,6 +52,7 @@ namespace UsersManagement.Repository.Repository
             }
             return await set.FirstOrDefaultAsync(x => x.Id == id);
         }
+
         public async Task<T> GetFirstAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbContext.Set<T>().FirstOrDefaultAsync(expression);

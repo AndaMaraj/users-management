@@ -11,7 +11,7 @@ namespace UsersManagement.Services.IService
 {
     public interface IUserService : IServiceAsync<User, UserDto>
     {
-        Task<UserDto> UserDetailsByIdAsync(int id);
+        //Task<UserDto> UserDetailsByIdAsync(int id);
         Task<List<UserDto>> GetAllUsersAsync();
     }
 }

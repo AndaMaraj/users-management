@@ -19,6 +19,7 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRepositoryAsync<User> userRepository;
         private readonly IMapper mapper;
+
         public UserService(IRepositoryAsync<User> userRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(userRepository, mapper, uniteOfWork)
         {
             this.userRepository = userRepository;
@@ -28,10 +29,10 @@ namespace UsersManagement.Services.Service
         {
             return mapper.Map<UserDto>(await userRepository.GetByIdAsync(id, src => src.Include(x => x.Role)));
         }
-        public async Task<UserDto> UserDetailsByIdAsync(int id)
+        /* public async Task<UserDto> UserDetailsByIdAsync(int id)
         {
             return mapper.Map<UserDto>(await userRepository.GetByIdAsync(id));
-        }
+        }*/
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
 

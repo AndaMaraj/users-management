@@ -31,11 +31,21 @@ namespace UsersManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserDto user)
         {
-            // todo: control if name and email does not exist in db
             if (!ModelState.IsValid) return View(user);
-            await _userService.AddAsync(user);
-            await _uniteOfWork.SaveChangesAsync();
-            return RedirectToAction("Index", controllerName: "User");
+            var email = await _userService.GetAll(x => x.Email == user.Email);
+            if (email.Count() == 0)
+            {
+                await _userService.AddAsync(user);
+                await _uniteOfWork.SaveChangesAsync();
+                return RedirectToAction("Index", controllerName: "User");
+            }
+            else
+            {
+                ViewBag.EmailExist = "There is another user with this email! Please try a different one!";
+                var roles = await _roleService.GetAllRolesAsync();
+                ViewBag.Roles = roles;
+                return View();
+            }
         }
         public async Task<IActionResult> Edit(int id)
         {
@@ -43,7 +53,7 @@ namespace UsersManagement.Controllers
             var user = await _userService.GetByIdAsync(id);
             var roles = await _roleService.GetAllRolesAsync();
             ViewBag.Roles = roles;
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
             return View(user);
         }
         [HttpPost]
@@ -52,6 +62,20 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
+                //var email = await _userService.GetAll(x => x.Email == user.Email);
+                // todo: control if email that user is trying to update is not of another user
+                /*
+                if(email.Count() > 0)
+                {
+                    var userEmail = _userService.GetUserByEmailAsync(user.Email);
+                    if(userEmail.Id != user.Id)
+                    {
+                        ViewBag.EmailExist = "There is another user with this email! Please try a different one!";
+                        var roles = await _roleService.GetAllRolesAsync();
+                        ViewBag.Roles = roles;
+                        return View();
+                    }
+                }*/
                 await _userService.UpdateAsync(user);
                 return RedirectToAction("Index", controllerName: "User");
             }
@@ -62,7 +86,7 @@ namespace UsersManagement.Controllers
             if (id == null) return NotFound();
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
-            
+
             return View(user);
         }
         [HttpPost]
@@ -71,7 +95,7 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            if(await _userService.DeleteAsync(id.Value))
+            if (await _userService.DeleteAsync(id.Value))
             {
                 // todo: show delete user success message
             }

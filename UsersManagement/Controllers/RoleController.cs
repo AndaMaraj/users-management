@@ -29,13 +29,22 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Create(RoleDto role)
         {
             if (!ModelState.IsValid) return View(role);
-            await _roleService.AddAsync(role);
-            await _uniteOfWork.SaveChangesAsync();
-            
-            return RedirectToAction("Index", controllerName: "Role");
+            var name = await _roleService.GetAll(x => x.Name == role.Name);
+            if(name.Count() > 0)
+            {
+                ViewBag.NameExist = "This role exist, please try another name";
+                return View();
+            }
+            else
+            {
+                await _roleService.AddAsync(role);
+                await _uniteOfWork.SaveChangesAsync();
+                return RedirectToAction("Index", controllerName: "Role");
+            }
         }
         public async Task<IActionResult> Edit(int? id)
         {
+            // todo: control if the user is adding a name of an existing user
             if (id == null) return NotFound();
             var role = await _roleService.GetByIdAsync(id.Value);
             if (role == null) return NotFound();
