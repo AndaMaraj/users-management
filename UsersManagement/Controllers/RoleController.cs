@@ -8,8 +8,8 @@ namespace UsersManagement.Controllers
     public class RoleController : Controller
     {
         private readonly IRoleService _roleService;
-        private readonly IUniteOfWork _uniteOfWork;
-        public RoleController(IRoleService roleService, IUniteOfWork uniteOfWork)
+        private readonly IUnitOfWork _uniteOfWork;
+        public RoleController(IRoleService roleService, IUnitOfWork uniteOfWork)
         {
             _roleService = roleService;
             _uniteOfWork = uniteOfWork;
@@ -18,6 +18,11 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Index()
         {
             var roles = await _roleService.GetAllRolesAsync();
+            if (TempData["SuccessMessage"] != null)
+            {
+                ViewBag.SuccessMessage = TempData["SuccessMessage"];
+                TempData.Remove("SuccessMessage");
+            }
             return View(roles);
         }
         public IActionResult Create()
@@ -32,7 +37,7 @@ namespace UsersManagement.Controllers
             var name = await _roleService.GetAll(x => x.Name == role.Name);
             if(name.Count() > 0)
             {
-                ViewBag.NameExist = "This role exist, please try another name";
+                ModelState.AddModelError(nameof(role.Name), "This role exists, please try another nam");
                 return View();
             }
             else
@@ -62,6 +67,7 @@ namespace UsersManagement.Controllers
                     ModelState.AddModelError(nameof(role.Name),"There is another role with this name");
                     return View(role);
                 }
+                // todo: when the user post the form without any change it throws a thread exception
                 await _roleService.UpdateAsync(role);
                 return RedirectToAction("Index", controllerName: "Role");
             }
@@ -82,15 +88,14 @@ namespace UsersManagement.Controllers
             if (id == null) return NotFound();
             if(await _roleService.DeleteAsync(id.Value))
             {
-                //todo: show message deleted
-                ViewBag.SuccessMessage = "File was successfully deleted";
+                TempData["SuccessMessage"] = "Role was successfully deleted";
+                return RedirectToAction("Index", controllerName: "Role");
             }
             else
             {
-                //todo: show message error
                 ViewBag.ErrorMessage = "Role was not deleted, please try again";
+                return View();
             }
-            return RedirectToAction("Index", controllerName: "Role");
         }
     }
 }

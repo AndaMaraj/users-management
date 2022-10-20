@@ -8,9 +8,9 @@ namespace UsersManagement.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IUniteOfWork _uniteOfWork;
+        private readonly IUnitOfWork _uniteOfWork;
         private readonly IRoleService _roleService;
-        public UserController(IUserService userService, IUniteOfWork uniteOfWork, IRoleService roleService)
+        public UserController(IUserService userService, IUnitOfWork uniteOfWork, IRoleService roleService)
         {
             _userService = userService;
             _uniteOfWork = uniteOfWork;
@@ -18,6 +18,11 @@ namespace UsersManagement.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            if (TempData["SuccessMessage"] != null)
+            {
+                ViewBag.SuccessMessage = TempData["SuccessMessage"];
+                TempData.Remove("SuccessMessage");
+            }
             var users = await _userService.GetAllUsersAsync();
             return View(users);
         }
@@ -41,7 +46,7 @@ namespace UsersManagement.Controllers
             }
             else
             {
-                ViewBag.EmailExist = "There is another user with this email! Please try a different one!";
+                ModelState.AddModelError(nameof(user.Email), "There is another user with this email! Please try a different one!");
                 var roles = await _roleService.GetAllRolesAsync();
                 ViewBag.Roles = roles;
                 return View();
@@ -62,16 +67,15 @@ namespace UsersManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var email = await _userService.GetAll(x => x.Email == user.Email);
                 var userEmail = await _userService.GetByEmail(user.Email);
-                if (email.Count() > 0 && userEmail.Id != user.Id)
+                if (userEmail != null && userEmail.Id != user.Id)
                 {
                     ModelState.AddModelError((nameof(user.Email)), "There is another user with this email! Please try a different one!");
                     var roles = await _roleService.GetAllRolesAsync();
                     ViewBag.Roles = roles;
                     return View();
                 }
-                // todo: when we try to insert the same email it throws a thread exception
+                // todo: when we try to update with the same email it throws a thread exception
                 await _userService.UpdateAsync(user);
                 return RedirectToAction("Index", controllerName: "User");
             }
@@ -93,13 +97,16 @@ namespace UsersManagement.Controllers
             if (id == null) return NotFound();
             if (await _userService.DeleteAsync(id.Value))
             {
-                // todo: show delete user success message
+                TempData["SuccessMessage"] = "User was successfully deleted!";
+                return RedirectToAction("Index", controllerName: "User");
             }
             else
             {
-                // todo: show delete user error message
+                var user = await _userService.GetByIdAsync(id.Value);
+                if (user == null) return NotFound();
+                ViewBag.ErrorMessage = "User was not deleted, please try again";
+                return View(user);
             }
-            return RedirectToAction("Index", controllerName: "User");
         }
     }
 }

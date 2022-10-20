@@ -16,7 +16,7 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRoleRepository roleRepository;
         private readonly IMapper mapper;
-        public RoleService(IRoleRepository roleRepository, IMapper mapper, IUniteOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
+        public RoleService(IRoleRepository roleRepository, IMapper mapper, IUnitOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
         {
             this.roleRepository = roleRepository;
             this.mapper = mapper;

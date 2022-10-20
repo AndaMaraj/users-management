@@ -8,10 +8,10 @@ using UsersManagement.Services.DTO;
 
 namespace UsersManagement.Services.UOW
 {
-    public class UniteOfWork : IUniteOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly UsersDbContext _dbContext;
-        public UniteOfWork(UsersDbContext usersDbContext)
+        public UnitOfWork(UsersDbContext usersDbContext)
         {
             this._dbContext = usersDbContext;
         }

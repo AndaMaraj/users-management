@@ -9,6 +9,12 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<span class="text-success">
+    @if (ViewBag.SuccessMessage != null)
+    {
+        @ViewBag.SuccessMessage
+    }
+</span>
 <table class="table">
     <thead>
         <tr>

@@ -17,8 +17,8 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRepositoryAsync<TEntity> _repository;
         private readonly IMapper _mapper;
-        private readonly IUniteOfWork _uniteOfWork;
-        public ServiceAsync(IRepositoryAsync<TEntity> repository, IMapper mapper, IUniteOfWork uniteOfWork)
+        private readonly IUnitOfWork _uniteOfWork;
+        public ServiceAsync(IRepositoryAsync<TEntity> repository, IMapper mapper, IUnitOfWork uniteOfWork)
         {
             _repository = repository;
             _mapper = mapper;

@@ -29,7 +29,7 @@ builder.Services.AddScoped(typeof(IServiceAsync<BaseEntity, BaseEntityDto>), typ
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddAutoMapper(cfg => { cfg.AddExpressionMapping(); }, typeof(MappingProfile).Assembly);
-builder.Services.AddScoped<IUniteOfWork, UniteOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
