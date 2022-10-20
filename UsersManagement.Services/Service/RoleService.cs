@@ -16,10 +16,12 @@ namespace UsersManagement.Services.Service
     {
         private readonly IRoleRepository roleRepository;
         private readonly IMapper mapper;
+        private readonly IUnitOfWork unitOfWork;
         public RoleService(IRoleRepository roleRepository, IMapper mapper, IUnitOfWork uniteOfWork) : base(roleRepository, mapper, uniteOfWork)
         {
             this.roleRepository = roleRepository;
             this.mapper = mapper;
+            this.unitOfWork = uniteOfWork;
         }
         public async Task<RoleDto> RoleDetailsById(int id)
         {

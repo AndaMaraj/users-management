@@ -35,7 +35,7 @@ namespace UsersManagement.Controllers
         {
             if (!ModelState.IsValid) return View(role);
             var name = await _roleService.GetAll(x => x.Name == role.Name);
-            if(name.Count() > 0)
+            if (name.Count() > 0)
             {
                 ModelState.AddModelError(nameof(role.Name), "This role exists, please try another nam");
                 return View();
@@ -52,7 +52,7 @@ namespace UsersManagement.Controllers
             if (id == null) return NotFound();
             var role = await _roleService.GetByIdAsync(id.Value);
             if (role == null) return NotFound();
-            
+
             return View(role);
         }
         [HttpPost]
@@ -62,12 +62,13 @@ namespace UsersManagement.Controllers
             if (ModelState.IsValid)
             {
                 var nameDb = await _roleService.GetByNameAsync(role.Name);
-                if(nameDb != null && nameDb.Id != role.Id)
+                if (nameDb != null && nameDb.Id != role.Id)
                 {
-                    ModelState.AddModelError(nameof(role.Name),"There is another role with this name");
+                    ModelState.AddModelError(nameof(role.Name), "There is another role with this name");
                     return View(role);
                 }
                 // todo: when the user post the form without any change it throws a thread exception
+                //await _roleService.UpdateAsync(role);
                 await _roleService.UpdateAsync(role);
                 return RedirectToAction("Index", controllerName: "Role");
             }
@@ -75,9 +76,9 @@ namespace UsersManagement.Controllers
         }
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if (id == null) return NotFound();
             var role = await _roleService.GetByIdAsync(id.Value);
-            if(role == null) return NotFound();
+            if (role == null) return NotFound();
 
             return View(role);
         }
@@ -86,7 +87,7 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            if(await _roleService.DeleteAsync(id.Value))
+            if (await _roleService.DeleteAsync(id.Value))
             {
                 TempData["SuccessMessage"] = "Role was successfully deleted";
                 return RedirectToAction("Index", controllerName: "Role");

@@ -30,12 +30,6 @@ namespace UsersManagement.Services.Service
             entity.CreatedOn = DateTime.UtcNow;
             await _repository.AddAsync(entity);
         }
-        public async Task UpdateAsync(TDto tDto)
-        {
-            var entity = _mapper.Map<TEntity>(tDto);
-            entity.UpdatedOn = DateTime.UtcNow;
-            await _repository.UpdateAsync(entity);
-        }
         public async Task<bool> DeleteAsync(int id)
         {
             var obj = await _repository.GetByIdAsync(id);
@@ -60,6 +54,16 @@ namespace UsersManagement.Services.Service
         {
             var predicate = _mapper.Map<Expression<Func<TEntity, bool>>>(expression);
             var entity = _repository.GetFirstAsync(predicate);
+            return _mapper.Map<TDto>(entity);
+        }
+
+        public async Task<TDto> UpdateAsync(TDto dto)
+        {
+            TEntity entity = await _repository.GetByIdAsync(dto.Id);
+            entity = _mapper.Map<TEntity>(dto);
+            entity.UpdatedOn = DateTime.UtcNow;
+            await _repository.UpdateAsync(entity);
+            //await _uniteOfWork.SaveChangesAsync();
             return _mapper.Map<TDto>(entity);
         }
     }

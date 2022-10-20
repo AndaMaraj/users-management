@@ -17,7 +17,7 @@ namespace UsersManagement.Repository.Repository
 
         public async Task<Role> GetByNameAsync(string name)
         {
-            return await _dbContext.Roles.FirstOrDefaultAsync(x => x.Name == name);
+            return await _dbContext.Roles.AsNoTracking().FirstOrDefaultAsync(x => x.Name == name);
         }
     }
 }

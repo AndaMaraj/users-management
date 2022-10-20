@@ -19,11 +19,12 @@ namespace UsersManagement.Services.Service
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
-
+        private readonly IUnitOfWork unitOfWork;
         public UserService(IUserRepository userRepository, IMapper mapper, IUnitOfWork uniteOfWork) : base(userRepository, mapper, uniteOfWork)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this.unitOfWork = uniteOfWork;
         }
         public new async Task<UserDto> GetByIdAsync(int id)
         {

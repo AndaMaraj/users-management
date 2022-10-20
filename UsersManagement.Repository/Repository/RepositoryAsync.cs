@@ -45,7 +45,7 @@ namespace UsersManagement.Repository.Repository
         }
         public async Task<T> GetByIdAsync(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
-            var set = _dbContext.Set<T>().AsQueryable();
+            var set = _dbContext.Set<T>().AsNoTracking().AsQueryable();
             if (include != null)
             {
                 set = include(set);
@@ -55,7 +55,7 @@ namespace UsersManagement.Repository.Repository
 
         public async Task<T> GetFirstAsync(Expression<Func<T, bool>> expression)
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(expression);
+            return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
     }
