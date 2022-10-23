@@ -36,7 +36,7 @@ namespace UsersManagement.Services.Service
             if (obj == null) return false;
             obj.IsDeleted = true;
             obj.DeletedOn = DateTime.UtcNow;
-            await _uniteOfWork.SaveChangesAsync();
+            await _repository.UpdateAsync(obj);
             return true;
         }
         public async Task<IEnumerable<TDto>> GetAll(Expression<Func<TDto, bool>> expression = null)

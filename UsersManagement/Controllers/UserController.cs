@@ -10,6 +10,7 @@ namespace UsersManagement.Controllers
         private readonly IUserService _userService;
         private readonly IUnitOfWork _uniteOfWork;
         private readonly IRoleService _roleService;
+        private readonly ILogger<UserController> _logger;
         public UserController(IUserService userService, IUnitOfWork uniteOfWork, IRoleService roleService)
         {
             _userService = userService;
@@ -23,13 +24,29 @@ namespace UsersManagement.Controllers
                 ViewBag.SuccessMessage = TempData["SuccessMessage"];
                 TempData.Remove("SuccessMessage");
             }
-            var users = await _userService.GetAllUsersAsync();
+            var users = new List<UserDto>();
+            try
+            {
+                users = await _userService.GetAllUsersAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
             return View(users);
         }
         public async Task<IActionResult> Create()
         {
-            var roles = await _roleService.GetAllRolesAsync();
-            ViewBag.Roles = roles;
+            var roles = new List<RoleDto>();
+            try
+            {
+                roles = await _roleService.GetAllRolesAsync();
+                ViewBag.Roles = roles;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
             return View();
         }
         [HttpPost]
@@ -37,55 +54,87 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> Create(UserDto user)
         {
             if (!ModelState.IsValid) return View(user);
-            var email = await _userService.GetAll(x => x.Email == user.Email);
-            if (email.Count() == 0)
+            try
             {
-                await _userService.AddAsync(user);
-                await _uniteOfWork.SaveChangesAsync();
-                return RedirectToAction("Index", controllerName: "User");
+                var email = await _userService.GetAll(x => x.Email == user.Email);
+                if (email.Count() == 0)
+                {
+                    await _userService.AddAsync(user);
+                    await _uniteOfWork.SaveChangesAsync();
+                    return RedirectToAction("Index", controllerName: "User");
+                }
+                else
+                {
+                    ModelState.AddModelError(nameof(user.Email), "There is another user with this email! Please try a different one!");
+                    var roles = await _roleService.GetAllRolesAsync();
+                    ViewBag.Roles = roles;
+                    return View();
+                }
             }
-            else
+            catch(Exception ex)
             {
-                ModelState.AddModelError(nameof(user.Email), "There is another user with this email! Please try a different one!");
-                var roles = await _roleService.GetAllRolesAsync();
-                ViewBag.Roles = roles;
-                return View();
+                _logger.LogError(ex, ex.Message);
             }
+
+            return View();
         }
         public async Task<IActionResult> Edit(int id)
         {
             if (id == null) return NotFound();
-            var user = await _userService.GetByIdAsync(id);
-            var roles = await _roleService.GetAllRolesAsync();
-            ViewBag.Roles = roles;
-            if (user == null) return NotFound();
+            var user = new UserDto();
+            try
+            {
+                user = await _userService.GetByIdAsync(id);
+                var roles = await _roleService.GetAllRolesAsync();
+                ViewBag.Roles = roles;
+                if (user == null) return NotFound();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
             return View(user);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserDto user)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var userEmail = await _userService.GetByEmail(user.Email);
-                if (userEmail != null && userEmail.Id != user.Id)
+                if (ModelState.IsValid)
                 {
-                    ModelState.AddModelError((nameof(user.Email)), "There is another user with this email! Please try a different one!");
-                    var roles = await _roleService.GetAllRolesAsync();
-                    ViewBag.Roles = roles;
-                    return View();
+                    var userEmail = await _userService.GetByEmail(user.Email);
+                    if (userEmail != null && userEmail.Id != user.Id)
+                    {
+                        ModelState.AddModelError((nameof(user.Email)), "There is another user with this email! Please try a different one!");
+                        var roles = await _roleService.GetAllRolesAsync();
+                        ViewBag.Roles = roles;
+                        return View();
+                    }
+                    // todo: when we try to update with the same email it throws a thread exception
+                    await _userService.UpdateAsync(user);
+                    return RedirectToAction("Index", controllerName: "User");
                 }
-                // todo: when we try to update with the same email it throws a thread exception
-                await _userService.UpdateAsync(user);
-                return RedirectToAction("Index", controllerName: "User");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
             return View(user);
         }
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null) return NotFound();
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
+            var user = new UserDto();
+            try
+            {
+                user = await _userService.GetByIdAsync(id);
+                if (user == null) return NotFound();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
 
             return View(user);
         }
@@ -95,18 +144,28 @@ namespace UsersManagement.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            if (await _userService.DeleteAsync(id.Value))
+            var user = new UserDto();
+            try
             {
-                TempData["SuccessMessage"] = "User was successfully deleted!";
-                return RedirectToAction("Index", controllerName: "User");
+                if (await _userService.DeleteAsync(id.Value))
+                {
+                    TempData["SuccessMessage"] = "User was successfully deleted!";
+                    return RedirectToAction("Index", controllerName: "User");
+                }
+                else
+                {
+                    user = await _userService.GetByIdAsync(id.Value);
+                    if (user == null) return NotFound();
+                    ViewBag.ErrorMessage = "User was not deleted, please try again";
+                    return View(user);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                var user = await _userService.GetByIdAsync(id.Value);
-                if (user == null) return NotFound();
-                ViewBag.ErrorMessage = "User was not deleted, please try again";
-                return View(user);
+                _logger.LogError(ex, ex.Message);
             }
+
+            return View(user);
         }
     }
 }
